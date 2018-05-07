@@ -19,7 +19,6 @@ namespace UE4BuildTools
         // Variables to Hold onto
         Projects LoadedProjects = new Projects();
         CustomFileCopier FileCopier = new CustomFileCopier("", "");
-        string NewReleaseVersion;
 
         public BuildDistribution()
         {
@@ -92,6 +91,7 @@ namespace UE4BuildTools
             btn_Process.Enabled = bln_Enable;
             btn_AddProject.Enabled = bln_Enable;
             btn_RemoveProject.Enabled = bln_Enable;
+            btn_SaveCurrentProject.Enabled = bln_Enable;
             btn_Source.Enabled = bln_Enable;
             btn_Destination.Enabled = bln_Enable;
             cb_ProjectList.Enabled = bln_Enable;
@@ -137,6 +137,59 @@ namespace UE4BuildTools
                 DirectoryCopy(subDir.FullName, tempPath, worker);
             }
         }
+
+        private bool UpdateExistingProject()
+        {
+            if (LoadedProjects != null)
+            {
+                Project temp = new Project();
+                temp.Name = tb_ProjectName.Text;
+                temp.Version = tb_ProjectVersion_Release.Text + '.' + tb_ProjectVersion_Major.Text + '.' + tb_ProjectVersion_Minor.Text;
+                temp.Source = tb_SourcePath.Text;
+                temp.Destination = tb_DestinationPath.Text;
+
+                // Check to see if project already exists, if so, update
+                if (cb_ProjectList.Items.Count > 0)
+                {
+                    foreach (var item in cb_ProjectList.Items)
+                    {
+                        if (String.Compare(temp.Name, cb_ProjectList.SelectedItem.ToString()) == 0)
+                        {
+                            foreach (Project project in LoadedProjects.Project)
+                            {
+                                if (string.Compare(temp.Name, project.Name) == 0)
+                                {
+                                    LoadedProjects.Project.Remove(project);
+                                    LoadedProjects.Project.Add(temp);
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        private bool AddProject()
+        {
+            if (LoadedProjects != null)
+            {
+                Project temp = new Project();
+                temp.Name = tb_ProjectName.Text;
+                temp.Version = tb_ProjectVersion_Release.Text + '.' + tb_ProjectVersion_Major.Text + '.' + tb_ProjectVersion_Minor.Text;
+                temp.Source = tb_SourcePath.Text;
+                temp.Destination = tb_DestinationPath.Text;
+
+                LoadedProjects.Project.Add(temp);
+                cb_ProjectList.Items.Add(temp.Name);
+                cb_ProjectList.SelectedIndex = cb_ProjectList.Items.Count - 1;
+                return true;
+            }
+
+            return false;
+        }
         #endregion
 
         #region Background Worker Functions
@@ -175,7 +228,7 @@ namespace UE4BuildTools
         // Begin the process of deploying the build
         private void btn_Process_Click(object sender, EventArgs e)
         {
-            //Ensure we have the path's needed.
+            // Ensure we have the path's needed.
             if(tb_DestinationPath.TextLength <= 0 || tb_SourcePath.TextLength <= 0)
             {
                 System.Windows.Forms.MessageBox.Show("Please ensure both Destination and Source folders have been selected.");
@@ -183,8 +236,6 @@ namespace UE4BuildTools
             }
 
             ToggleForm(false);
-
-            //Save State
             SaveXMLData();
 
             // Make new folder with appropiate naming convention
@@ -204,8 +255,7 @@ namespace UE4BuildTools
             // Copy necessary files
             if (System.IO.File.Exists(tb_SourcePath.Text))
             {
-                //Copy over Game Files
-                //DirectoryCopy(newSourcePath, newDestPath);
+                //Copy over Game Files, spun off on new thread as this is can be more intensive
                 myBackgroundWorker.RunWorkerAsync();
 
                 // Move the other dependent files
@@ -245,50 +295,15 @@ namespace UE4BuildTools
                 tb_DestinationPath.Text = folderBrowserDialog.SelectedPath;
         }
 
-        // Add new project to list
+        // Add or Update new project to list
         private void btn_AddProject_Click(object sender, EventArgs e)
         {
             if(LoadedProjects != null)
             {
-                Project temp = new Project();
-                temp.Name = tb_ProjectName.Text;
-                temp.Version = tb_ProjectVersion_Release.Text + '.' + tb_ProjectVersion_Major.Text + '.' + tb_ProjectVersion_Minor.Text;
-                temp.Source = tb_SourcePath.Text;
-                temp.Destination = tb_DestinationPath.Text;
-                bool bln_Found = false;
-
-                // Check to see if project already exists, if so, update
-                if(cb_ProjectList.Items.Count > 0)
-                {
-                    foreach (var item in cb_ProjectList.Items)
-                    {
-                        if (String.Compare(temp.Name, cb_ProjectList.SelectedItem.ToString()) == 0)
-                        {
-                            foreach (Project project in LoadedProjects.Project)
-                            {
-                                if (string.Compare(temp.Name, project.Name) == 0)
-                                {
-                                    LoadedProjects.Project.Remove(project);
-                                    LoadedProjects.Project.Add(temp);
-                                    cb_ProjectList.Items.Add(temp.Name);
-                                    cb_ProjectList.SelectedIndex = cb_ProjectList.Items.Count - 1;
-                                    bln_Found = true;
-                                    MessageBox.Show("Project Updated Successfully");
-                                    return;
-                                }
-                            }
-                        }
-                    }
-                }
-
-                // Project doesn't exist already, add it
-                if(!bln_Found)
-                {
-                    LoadedProjects.Project.Add(temp);
-                    cb_ProjectList.Items.Add(temp.Name);
-                    cb_ProjectList.SelectedIndex = cb_ProjectList.Items.Count - 1;
+                if(UpdateExistingProject())
+                    MessageBox.Show("Project Updated Successfully");
+                else if (AddProject())
                     MessageBox.Show("Project Added Successfully");
-                }
             }
         }
 
@@ -314,17 +329,21 @@ namespace UE4BuildTools
             }
         }
 
+        // Gracefully Quit with a save.
         private void btn_Exit_Click(object sender, EventArgs e)
         {
-            //Gracefully Quit with a save.
             SaveXMLData();
             this.Close();
         }
 
+        // Saves current project
         private void btn_SaveCurrentProject_Click(object sender, EventArgs e)
         {
-            SaveXMLData();
-            MessageBox.Show("Project Saved");
+            if(UpdateExistingProject())
+            {
+                SaveXMLData();
+                MessageBox.Show("Project Saved");
+            }
         }
         #endregion
 
@@ -335,23 +354,23 @@ namespace UE4BuildTools
             if (cb_IncrementVersion.Checked)
             {
                 // Increment the minor version number
-                if(tb_ProjectVersion_Release.Text.Length > 0)
+                if(tb_ProjectVersion_Minor.Text.Length > 0)
                 {
                     tb_ProjectVersion_Minor.Enabled = false;
                     int MinorVersion = Int16.Parse(tb_ProjectVersion_Minor.Text);
                     MinorVersion += 1;
 
                     if (MinorVersion < 10)
-                        tb_ProjectVersion_Minor.Text += "0" + MinorVersion.ToString();
+                        tb_ProjectVersion_Minor.Text = "0" + MinorVersion.ToString();
                     else
-                        tb_ProjectVersion_Minor.Text += MinorVersion.ToString();
+                        tb_ProjectVersion_Minor.Text = MinorVersion.ToString();
                 }
             }
 
             // Reset Version Number to Previous
             if (!cb_IncrementVersion.Checked)
             {
-                tb_ProjectVersion_Release.Enabled = true;
+                tb_ProjectVersion_Minor.Enabled = true;
                 if (cb_ProjectList.Items != null)
                     if (cb_ProjectList.SelectedIndex >= 0)
                         foreach (Project project in LoadedProjects.Project)
@@ -360,21 +379,27 @@ namespace UE4BuildTools
                                 string[] versions = project.Version.Split('.');
                                 if(versions != null)
                                 {
-                                    for (int i = 0; i < versions.Length; i++)
+                                    if (versions.Length >= 3)
                                     {
-                                        switch (i)
+                                        tb_ProjectVersion_Release.Text = versions[0];
+                                        tb_ProjectVersion_Major.Text = versions[1];
+                                        tb_ProjectVersion_Minor.Text = versions[2];
+                                    }
+
+                                    if (versions.Length < 3)
+                                    {
+                                        if (versions.Length == 2)
                                         {
-                                            case 0:
-                                                tb_ProjectVersion_Release.Text = versions[i];
-                                                break;
-                                            case 1:
-                                                tb_ProjectVersion_Major.Text = versions[i];
-                                                break;
-                                            case 2:
-                                                tb_ProjectVersion_Minor.Text = versions[i];
-                                                break;
-                                            default:
-                                                break;
+                                            tb_ProjectVersion_Release.Text = versions[0];
+                                            tb_ProjectVersion_Major.Text = versions[1];
+                                            tb_ProjectVersion_Minor.Text = "0";
+                                        }
+
+                                        if (versions.Length == 1)
+                                        {
+                                            tb_ProjectVersion_Release.Text = versions[0];
+                                            tb_ProjectVersion_Major.Text = "0";
+                                            tb_ProjectVersion_Minor.Text = "0";
                                         }
                                     }
                                 }
@@ -396,21 +421,27 @@ namespace UE4BuildTools
                                 string[] versions = project.Version.Split('.');
                                 if (versions != null)
                                 {
-                                    for (int i = 0; i < versions.Length; i++)
+                                    if (versions.Length >= 3)
                                     {
-                                        switch (i)
+                                        tb_ProjectVersion_Release.Text = versions[0];
+                                        tb_ProjectVersion_Major.Text = versions[1];
+                                        tb_ProjectVersion_Minor.Text = versions[2];
+                                    }
+
+                                    if (versions.Length < 3)
+                                    {
+                                        if (versions.Length == 2)
                                         {
-                                            case 0:
-                                                tb_ProjectVersion_Release.Text = versions[i];
-                                                break;
-                                            case 1:
-                                                tb_ProjectVersion_Major.Text = versions[i];
-                                                break;
-                                            case 2:
-                                                tb_ProjectVersion_Minor.Text = versions[i];
-                                                break;
-                                            default:
-                                                break;
+                                            tb_ProjectVersion_Release.Text = versions[0];
+                                            tb_ProjectVersion_Major.Text = versions[1];
+                                            tb_ProjectVersion_Minor.Text = "0";
+                                        }
+
+                                        if (versions.Length == 1)
+                                        {
+                                            tb_ProjectVersion_Release.Text = versions[0];
+                                            tb_ProjectVersion_Major.Text = "0";
+                                            tb_ProjectVersion_Minor.Text = "0";
                                         }
                                     }
                                 }
