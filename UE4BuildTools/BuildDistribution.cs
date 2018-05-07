@@ -202,7 +202,8 @@ namespace UE4BuildTools
             ToggleForm(false);
             if (File.Exists(tb_SourcePath.Text) && worker != null)
             {
-                string newDestPath = System.IO.Path.Combine(tb_DestinationPath.Text, tb_ProjectName.Text + "_" + tb_ProjectVersion_Release.Text);
+                string newDestPath = System.IO.Path.Combine(tb_DestinationPath.Text,
+                    tb_ProjectName.Text + "_" + tb_ProjectVersion_Release.Text + '.' + tb_ProjectVersion_Major.Text + '.' + tb_ProjectVersion_Minor.Text);
                 string newSourcePath = Path.GetDirectoryName(tb_SourcePath.Text);
 
                 pb_Process.Minimum = 0;
