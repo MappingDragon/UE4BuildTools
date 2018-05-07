@@ -51,12 +51,14 @@
             this.tb_ProjectVersion_Minor = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.btn_SaveCurrentProject = new System.Windows.Forms.Button();
+            this.tb_ProjectSource = new System.Windows.Forms.TextBox();
+            this.btn_Project = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // btn_Process
             // 
             this.btn_Process.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.btn_Process.Location = new System.Drawing.Point(497, 143);
+            this.btn_Process.Location = new System.Drawing.Point(497, 170);
             this.btn_Process.Name = "btn_Process";
             this.btn_Process.Size = new System.Drawing.Size(90, 39);
             this.btn_Process.TabIndex = 0;
@@ -67,7 +69,7 @@
             // btn_Exit
             // 
             this.btn_Exit.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.btn_Exit.Location = new System.Drawing.Point(20, 143);
+            this.btn_Exit.Location = new System.Drawing.Point(20, 170);
             this.btn_Exit.Name = "btn_Exit";
             this.btn_Exit.Size = new System.Drawing.Size(90, 39);
             this.btn_Exit.TabIndex = 1;
@@ -87,7 +89,7 @@
             // 
             // btn_Source
             // 
-            this.btn_Source.Location = new System.Drawing.Point(512, 89);
+            this.btn_Source.Location = new System.Drawing.Point(512, 116);
             this.btn_Source.Name = "btn_Source";
             this.btn_Source.Size = new System.Drawing.Size(75, 23);
             this.btn_Source.TabIndex = 3;
@@ -97,7 +99,7 @@
             // 
             // btn_Destination
             // 
-            this.btn_Destination.Location = new System.Drawing.Point(512, 115);
+            this.btn_Destination.Location = new System.Drawing.Point(512, 142);
             this.btn_Destination.Name = "btn_Destination";
             this.btn_Destination.Size = new System.Drawing.Size(75, 23);
             this.btn_Destination.TabIndex = 4;
@@ -107,14 +109,14 @@
             // 
             // tb_SourcePath
             // 
-            this.tb_SourcePath.Location = new System.Drawing.Point(20, 91);
+            this.tb_SourcePath.Location = new System.Drawing.Point(20, 118);
             this.tb_SourcePath.Name = "tb_SourcePath";
             this.tb_SourcePath.Size = new System.Drawing.Size(486, 20);
             this.tb_SourcePath.TabIndex = 5;
             // 
             // tb_DestinationPath
             // 
-            this.tb_DestinationPath.Location = new System.Drawing.Point(20, 117);
+            this.tb_DestinationPath.Location = new System.Drawing.Point(20, 144);
             this.tb_DestinationPath.Name = "tb_DestinationPath";
             this.tb_DestinationPath.Size = new System.Drawing.Size(486, 20);
             this.tb_DestinationPath.TabIndex = 6;
@@ -197,7 +199,7 @@
             // 
             // pb_Process
             // 
-            this.pb_Process.Location = new System.Drawing.Point(116, 143);
+            this.pb_Process.Location = new System.Drawing.Point(116, 170);
             this.pb_Process.Name = "pb_Process";
             this.pb_Process.Size = new System.Drawing.Size(375, 23);
             this.pb_Process.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
@@ -249,11 +251,31 @@
             this.btn_SaveCurrentProject.UseVisualStyleBackColor = true;
             this.btn_SaveCurrentProject.Click += new System.EventHandler(this.btn_SaveCurrentProject_Click);
             // 
+            // tb_ProjectSource
+            // 
+            this.tb_ProjectSource.Location = new System.Drawing.Point(20, 92);
+            this.tb_ProjectSource.Name = "tb_ProjectSource";
+            this.tb_ProjectSource.Size = new System.Drawing.Size(486, 20);
+            this.tb_ProjectSource.TabIndex = 21;
+            this.tb_ProjectSource.Text = "D:\\Git\\";
+            // 
+            // btn_Project
+            // 
+            this.btn_Project.Location = new System.Drawing.Point(512, 90);
+            this.btn_Project.Name = "btn_Project";
+            this.btn_Project.Size = new System.Drawing.Size(75, 23);
+            this.btn_Project.TabIndex = 20;
+            this.btn_Project.Text = "Project";
+            this.btn_Project.UseVisualStyleBackColor = true;
+            this.btn_Project.Click += new System.EventHandler(this.btn_Project_Click);
+            // 
             // BuildDistribution
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(611, 197);
+            this.ClientSize = new System.Drawing.Size(611, 223);
+            this.Controls.Add(this.tb_ProjectSource);
+            this.Controls.Add(this.btn_Project);
             this.Controls.Add(this.btn_SaveCurrentProject);
             this.Controls.Add(this.tb_ProjectVersion_Minor);
             this.Controls.Add(this.label2);
@@ -306,6 +328,8 @@
         private System.Windows.Forms.TextBox tb_ProjectVersion_Minor;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button btn_SaveCurrentProject;
+        private System.Windows.Forms.TextBox tb_ProjectSource;
+        private System.Windows.Forms.Button btn_Project;
     }
 }
 

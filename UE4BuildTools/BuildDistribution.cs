@@ -28,7 +28,7 @@ namespace UE4BuildTools
             PopulateForm();
         }
 
-        #region Tool Functions
+#region Tool Functions
         // Builds folders necessary if they do not exist
         public void BuildFolders()
         {
@@ -94,7 +94,9 @@ namespace UE4BuildTools
             btn_SaveCurrentProject.Enabled = bln_Enable;
             btn_Source.Enabled = bln_Enable;
             btn_Destination.Enabled = bln_Enable;
+            btn_Project.Enabled = bln_Enable;
             cb_ProjectList.Enabled = bln_Enable;
+            tb_ProjectSource.Enabled = bln_Enable;
             tb_ProjectName.Enabled = bln_Enable;
             tb_ProjectVersion_Release.Enabled = bln_Enable;
             tb_ProjectVersion_Major.Enabled = bln_Enable;
@@ -191,9 +193,72 @@ namespace UE4BuildTools
 
             return false;
         }
-        #endregion
 
-        #region Background Worker Functions
+        private void IncrementVersion()
+        {
+            // Increment Version Number
+            if (cb_IncrementVersion.Checked)
+            {
+                // Increment the minor version number
+                if (tb_ProjectVersion_Minor.Text.Length > 0)
+                {
+                    tb_ProjectVersion_Minor.Enabled = false;
+                    int MinorVersion = Int16.Parse(tb_ProjectVersion_Minor.Text);
+                    MinorVersion += 1;
+
+                    if (MinorVersion < 10)
+                        tb_ProjectVersion_Minor.Text = "0" + MinorVersion.ToString();
+                    else
+                        tb_ProjectVersion_Minor.Text = MinorVersion.ToString();
+                }
+            }
+        }
+
+        private void RevertVersion()
+        {
+            // Reset Version Number to Previous
+            if (!cb_IncrementVersion.Checked)
+            {
+                tb_ProjectVersion_Minor.Enabled = true;
+                if (cb_ProjectList.Items != null)
+                    if (cb_ProjectList.SelectedIndex >= 0)
+                        foreach (Project project in LoadedProjects.Project)
+                            if (String.Compare(cb_ProjectList.SelectedItem.ToString(), project.Name) == 0)
+                            {
+                                string[] versions = project.Version.Split('.');
+                                if (versions != null)
+                                {
+                                    if (versions.Length >= 3)
+                                    {
+                                        tb_ProjectVersion_Release.Text = versions[0];
+                                        tb_ProjectVersion_Major.Text = versions[1];
+                                        tb_ProjectVersion_Minor.Text = versions[2];
+                                    }
+
+                                    if (versions.Length < 3)
+                                    {
+                                        if (versions.Length == 2)
+                                        {
+                                            tb_ProjectVersion_Release.Text = versions[0];
+                                            tb_ProjectVersion_Major.Text = versions[1];
+                                            tb_ProjectVersion_Minor.Text = "0";
+                                        }
+
+                                        if (versions.Length == 1)
+                                        {
+                                            tb_ProjectVersion_Release.Text = versions[0];
+                                            tb_ProjectVersion_Major.Text = "0";
+                                            tb_ProjectVersion_Minor.Text = "0";
+                                        }
+                                    }
+                                }
+                                return;
+                            }
+            }
+        }
+#endregion
+
+#region Background Worker Functions
         // Functions that handle file copy in a new thread and reports progress to main form
         private void myBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
@@ -221,11 +286,13 @@ namespace UE4BuildTools
         void myBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             ToggleForm(true);
+            IncrementVersion();
+            SaveXMLData();
             MessageBox.Show("Done");
         }
-        #endregion
+#endregion
 
-        #region Form Button Functionality
+#region Form Button Functionality
         // Begin the process of deploying the build
         private void btn_Process_Click(object sender, EventArgs e)
         {
@@ -265,6 +332,11 @@ namespace UE4BuildTools
                 else
                     System.Windows.Forms.MessageBox.Show("Couldn't find CustomButtonEvents.json in Resources Folder. Did not Copy.");
 
+                if (File.Exists(tb_ProjectSource.Text + "\\" + tb_ProjectName.Text + "\\" + "Binaries\\Win64\\" + tb_ProjectName.Text + "Server.exe"))
+                    File.Copy(tb_ProjectSource.Text + "\\" + tb_ProjectName.Text + "\\" + "Binaries\\Win64\\" + tb_ProjectName.Text + "Server.exe",
+                        newDestPath + "\\" + tb_ProjectName.Text + "\\Binaries\\Win64" + tb_ProjectName + "Server.exe", 
+                        true);
+
                 if (File.Exists("Bats\\" + tb_ProjectName.Text + ".bat"))
                     File.Copy("Bats\\" + tb_ProjectName.Text + ".bat", newDestPath + "\\" + tb_ProjectName.Text + ".bat", true);
                 else
@@ -293,6 +365,14 @@ namespace UE4BuildTools
             DialogResult result = folderBrowserDialog.ShowDialog();
             if (result == DialogResult.OK)
                 tb_DestinationPath.Text = folderBrowserDialog.SelectedPath;
+        }
+
+        private void btn_Project_Click(object sender, EventArgs e)
+        {
+            //Show the folder dialog box
+            DialogResult result = folderBrowserDialog.ShowDialog();
+            if (result == DialogResult.OK)
+                tb_ProjectSource.Text = folderBrowserDialog.SelectedPath;
         }
 
         // Add or Update new project to list
@@ -345,67 +425,16 @@ namespace UE4BuildTools
                 MessageBox.Show("Project Saved");
             }
         }
-        #endregion
+#endregion
 
-        #region Form Index Changed Events
+#region Form Index Changed Events
         private void cb_IncrementVersion_CheckedChanged(object sender, EventArgs e)
         {
             // Increment Version Number
-            if (cb_IncrementVersion.Checked)
-            {
-                // Increment the minor version number
-                if(tb_ProjectVersion_Minor.Text.Length > 0)
-                {
-                    tb_ProjectVersion_Minor.Enabled = false;
-                    int MinorVersion = Int16.Parse(tb_ProjectVersion_Minor.Text);
-                    MinorVersion += 1;
-
-                    if (MinorVersion < 10)
-                        tb_ProjectVersion_Minor.Text = "0" + MinorVersion.ToString();
-                    else
-                        tb_ProjectVersion_Minor.Text = MinorVersion.ToString();
-                }
-            }
+            IncrementVersion();
 
             // Reset Version Number to Previous
-            if (!cb_IncrementVersion.Checked)
-            {
-                tb_ProjectVersion_Minor.Enabled = true;
-                if (cb_ProjectList.Items != null)
-                    if (cb_ProjectList.SelectedIndex >= 0)
-                        foreach (Project project in LoadedProjects.Project)
-                            if (String.Compare(cb_ProjectList.SelectedItem.ToString(), project.Name) == 0)
-                            {
-                                string[] versions = project.Version.Split('.');
-                                if(versions != null)
-                                {
-                                    if (versions.Length >= 3)
-                                    {
-                                        tb_ProjectVersion_Release.Text = versions[0];
-                                        tb_ProjectVersion_Major.Text = versions[1];
-                                        tb_ProjectVersion_Minor.Text = versions[2];
-                                    }
-
-                                    if (versions.Length < 3)
-                                    {
-                                        if (versions.Length == 2)
-                                        {
-                                            tb_ProjectVersion_Release.Text = versions[0];
-                                            tb_ProjectVersion_Major.Text = versions[1];
-                                            tb_ProjectVersion_Minor.Text = "0";
-                                        }
-
-                                        if (versions.Length == 1)
-                                        {
-                                            tb_ProjectVersion_Release.Text = versions[0];
-                                            tb_ProjectVersion_Major.Text = "0";
-                                            tb_ProjectVersion_Minor.Text = "0";
-                                        }
-                                    }
-                                }
-                                return;
-                            }
-            }
+            RevertVersion();
         }
 
         // Populate the form properly based on user selection.
@@ -447,12 +476,14 @@ namespace UE4BuildTools
                                 }
                                 tb_ProjectName.Text = project.Name;
                                 tb_ProjectName.Text = project.Name;
+                                tb_ProjectSource.Text = project.ProjectSource;
                                 tb_SourcePath.Text = project.Source;
                                 tb_DestinationPath.Text = project.Destination;
                                 return;
                             }
             }
         }
-        #endregion
+#endregion
+
     }
 }

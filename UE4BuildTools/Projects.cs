@@ -11,6 +11,8 @@ namespace UE4BuildTools
         public string Name { get; set; }
         [XmlElement(ElementName = "version")]
         public string Version { get; set; }
+        [XmlElement(ElementName = "projectsource")]
+        public string ProjectSource { get; set; }
         [XmlElement(ElementName = "source")]
         public string Source { get; set; }
         [XmlElement(ElementName = "destination")]
