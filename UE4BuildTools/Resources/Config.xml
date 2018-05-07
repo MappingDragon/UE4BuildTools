@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<projects>
+  <project>
+    <name>LotR</name>
+    <version>0.2.12</version>
+    <source></source>
+    <destination></destination>
+  </project>
+  <project>
+    <name>BalloonRush</name>
+    <version>0.1</version>
+    <source></source>
+    <destination></destination>
+  </project>
+  <project>
+    <name>ProjectTest</name>
+    <version>0.12</version>
+    <source>C:\Users\Demo\Documents\Visual Studio 2017\Projects\UE4BuildTools\UE4BuildTools\bin\Debug\TestSource\TestProject.exe</source>
+    <destination>C:\Users\Demo\Documents\Visual Studio 2017\Projects\UE4BuildTools\UE4BuildTools\bin\Debug</destination>
+  </project>
+</projects>
