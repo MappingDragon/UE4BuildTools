@@ -209,7 +209,6 @@ namespace UE4BuildTools
                 pb_Process.Maximum = 100;
 
                 DirectoryCopy(newSourcePath, newDestPath, worker);
-
             }
         }
 

@@ -193,6 +193,7 @@
             this.myBackgroundWorker.WorkerSupportsCancellation = true;
             this.myBackgroundWorker.DoWork += myBackgroundWorker_DoWork;
             this.myBackgroundWorker.ProgressChanged += myBackgroundWorker_ProgressChanged;
+            this.myBackgroundWorker.RunWorkerCompleted += myBackgroundWorker_RunWorkerCompleted;
             // 
             // pb_Process
             // 
