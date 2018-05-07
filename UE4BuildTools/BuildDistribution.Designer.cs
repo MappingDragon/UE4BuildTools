@@ -191,6 +191,8 @@
             // 
             this.myBackgroundWorker.WorkerReportsProgress = true;
             this.myBackgroundWorker.WorkerSupportsCancellation = true;
+            this.myBackgroundWorker.DoWork += myBackgroundWorker_DoWork;
+            this.myBackgroundWorker.ProgressChanged += myBackgroundWorker_ProgressChanged;
             // 
             // pb_Process
             // 

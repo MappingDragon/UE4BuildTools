@@ -13,9 +13,9 @@
     <destination></destination>
   </project>
   <project>
-    <name>ProjectTest</name>
-    <version>0.12</version>
-    <source>C:\Users\Demo\Documents\Visual Studio 2017\Projects\UE4BuildTools\UE4BuildTools\bin\Debug\TestSource\TestProject.exe</source>
-    <destination>C:\Users\Demo\Documents\Visual Studio 2017\Projects\UE4BuildTools\UE4BuildTools\bin\Debug</destination>
+    <name>EagleStrike</name>
+    <version>0.3.01</version>
+    <source>C:\Users\Demo\Documents\Visual Studio 2017\Projects\UE4BuildTools\UE4BuildTools\bin\Release\EagleStrike\EagleStrike.exe</source>
+    <destination>C:\Users\Demo\Desktop\BuildDropTest</destination>
   </project>
 </projects>

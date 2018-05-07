@@ -98,7 +98,8 @@ namespace UE4BuildTools
             tb_ProjectName.Enabled = bln_Enable;
             tb_ProjectVersion_Release.Enabled = bln_Enable;
             tb_ProjectVersion_Major.Enabled = bln_Enable;
-            tb_ProjectVersion_Minor.Enabled = bln_Enable;
+            if(!cb_IncrementVersion.Checked)
+                tb_ProjectVersion_Minor.Enabled = bln_Enable;
             tb_SourcePath.Enabled = bln_Enable;
             tb_DestinationPath.Enabled = bln_Enable;
             cb_IncrementVersion.Enabled = bln_Enable;
@@ -197,8 +198,8 @@ namespace UE4BuildTools
         private void myBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             Control.CheckForIllegalCrossThreadCalls = false;
-            ToggleForm(false);
             BackgroundWorker worker = sender as BackgroundWorker;
+            ToggleForm(false);
             if (File.Exists(tb_SourcePath.Text) && worker != null)
             {
                 string newDestPath = System.IO.Path.Combine(tb_DestinationPath.Text, tb_ProjectName.Text + "_" + tb_ProjectVersion_Release.Text);
@@ -210,6 +211,7 @@ namespace UE4BuildTools
                 DirectoryCopy(newSourcePath, newDestPath, worker);
 
             }
+            ToggleForm(true);
         }
 
         void myBackgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -235,11 +237,11 @@ namespace UE4BuildTools
                 return;
             }
 
-            ToggleForm(false);
             SaveXMLData();
 
             // Make new folder with appropiate naming convention
-            string newDestPath = System.IO.Path.Combine(tb_DestinationPath.Text, tb_ProjectName.Text + "_" + tb_ProjectVersion_Release.Text);
+            string newDestPath = System.IO.Path.Combine(tb_DestinationPath.Text, 
+                tb_ProjectName.Text + "_" + tb_ProjectVersion_Release.Text + '.' + tb_ProjectVersion_Major.Text + '.' + tb_ProjectVersion_Minor.Text);
             string newSourcePath = Path.GetDirectoryName(tb_SourcePath.Text);
             if (!Directory.Exists(newDestPath))
             {
@@ -274,7 +276,6 @@ namespace UE4BuildTools
                 System.Windows.Forms.MessageBox.Show("Source file doesn't exist!");
                 return;
             }
-
         }
 
         // Set the source file
