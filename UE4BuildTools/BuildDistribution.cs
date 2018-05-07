@@ -211,7 +211,6 @@ namespace UE4BuildTools
                 DirectoryCopy(newSourcePath, newDestPath, worker);
 
             }
-            ToggleForm(true);
         }
 
         void myBackgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
