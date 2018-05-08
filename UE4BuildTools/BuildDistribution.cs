@@ -332,8 +332,8 @@ namespace UE4BuildTools
                 else
                     System.Windows.Forms.MessageBox.Show("Couldn't find CustomButtonEvents.json in Resources Folder. Did not Copy.");
 
-                if (File.Exists(tb_ProjectSource.Text + "\\" + tb_ProjectName.Text + "\\" + "Binaries\\Win64\\" + tb_ProjectName.Text + "Server.exe"))
-                    File.Copy(tb_ProjectSource.Text + "\\" + tb_ProjectName.Text + "\\" + "Binaries\\Win64\\" + tb_ProjectName.Text + "Server.exe",
+                if (File.Exists(tb_ProjectSource.Text + "\\" + tb_ProjectName.Text + "\\Binaries\\Win64\\" + tb_ProjectName.Text + "Server.exe"))
+                    File.Copy(tb_ProjectSource.Text + "\\" + tb_ProjectName.Text + "\\Binaries\\Win64\\" + tb_ProjectName.Text + "Server.exe",
                         newDestPath + "\\" + tb_ProjectName.Text + "\\Binaries\\Win64" + tb_ProjectName + "Server.exe", 
                         true);
 

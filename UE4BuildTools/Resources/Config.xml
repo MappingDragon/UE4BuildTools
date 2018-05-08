@@ -1,21 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <projects>
   <project>
-    <name>LotR</name>
-    <version>0.2.12</version>
-    <source></source>
-    <destination></destination>
-  </project>
-  <project>
-    <name>BalloonRush</name>
-    <version>0.1</version>
-    <source></source>
-    <destination></destination>
-  </project>
-  <project>
     <name>EagleStrike</name>
-    <version>0.3.01</version>
-    <source>C:\Users\Demo\Documents\Visual Studio 2017\Projects\UE4BuildTools\UE4BuildTools\bin\Release\EagleStrike\EagleStrike.exe</source>
+    <version>0.3.02</version>
+    <projectsource>C:\Users\Demo\Desktop\BuildDropTest\ProjectsSource</projectsource>
+    <source>C:\Users\Demo\Desktop\BuildDropTest\Projects\EagleStrike\EagleStrike.exe</source>
     <destination>C:\Users\Demo\Desktop\BuildDropTest</destination>
   </project>
 </projects>
