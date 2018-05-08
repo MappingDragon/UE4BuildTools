@@ -3,7 +3,7 @@
   <project>
     <name>EagleStrike</name>
     <version>0.3.02</version>
-    <projectsource>C:\Users\Demo\Desktop\BuildDropTest\ProjectsSource</projectsource>
+    <projectsource>C:\Users\Demo\Desktop\BuildDropTest\ProjectSource</projectsource>
     <source>C:\Users\Demo\Desktop\BuildDropTest\Projects\EagleStrike\EagleStrike.exe</source>
     <destination>C:\Users\Demo\Desktop\BuildDropTest</destination>
   </project>

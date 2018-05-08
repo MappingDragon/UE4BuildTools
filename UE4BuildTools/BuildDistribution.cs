@@ -267,15 +267,23 @@ namespace UE4BuildTools
             ToggleForm(false);
             if (File.Exists(tb_SourcePath.Text) && worker != null)
             {
-                string newDestPath = System.IO.Path.Combine(tb_DestinationPath.Text,
+                string newDestPathx = System.IO.Path.Combine(tb_DestinationPath.Text,
                     tb_ProjectName.Text + "_" + tb_ProjectVersion_Release.Text + '.' + tb_ProjectVersion_Major.Text + '.' + tb_ProjectVersion_Minor.Text);
                 string newSourcePath = Path.GetDirectoryName(tb_SourcePath.Text);
 
                 pb_Process.Minimum = 0;
                 pb_Process.Maximum = 100;
 
-                DirectoryCopy(newSourcePath, newDestPath, worker);
+                DirectoryCopy(newSourcePath, newDestPathx, worker);
             }
+
+            // Copy over the server.exe at the end.
+            string newDestPath = System.IO.Path.Combine(tb_DestinationPath.Text,
+                tb_ProjectName.Text + "_" + tb_ProjectVersion_Release.Text + '.' + tb_ProjectVersion_Major.Text + '.' + tb_ProjectVersion_Minor.Text);
+            string tempSource = tb_ProjectSource.Text + "\\" + tb_ProjectName.Text + "\\Binaries\\Win64\\" + tb_ProjectName.Text + "Server.exe";
+            string tempDest = newDestPath + "\\" + tb_ProjectName.Text + "\\Binaries\\Win64\\" + tb_ProjectName.Text + "Server.exe";
+            if (File.Exists(tempSource))
+                File.Copy(tempSource, tempDest, true);
         }
 
         void myBackgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -326,19 +334,21 @@ namespace UE4BuildTools
                 //Copy over Game Files, spun off on new thread as this is can be more intensive
                 myBackgroundWorker.RunWorkerAsync();
 
+                string tempSource;
+                string tempDest;
+
                 // Move the other dependent files
-                if (File.Exists("Resources\\CustomButtonEvents.json"))
-                    File.Copy("Resources\\CustomButtonEvents.json", newDestPath + "\\CustomButtonEvents.json", true);
+                tempSource = "Resources\\CustomButtonEvents.json";
+                tempDest = newDestPath + "\\CustomButtonEvents.json";
+                if (File.Exists(tempSource))
+                    File.Copy(tempSource, tempDest, true);
                 else
                     System.Windows.Forms.MessageBox.Show("Couldn't find CustomButtonEvents.json in Resources Folder. Did not Copy.");
 
-                if (File.Exists(tb_ProjectSource.Text + "\\" + tb_ProjectName.Text + "\\Binaries\\Win64\\" + tb_ProjectName.Text + "Server.exe"))
-                    File.Copy(tb_ProjectSource.Text + "\\" + tb_ProjectName.Text + "\\Binaries\\Win64\\" + tb_ProjectName.Text + "Server.exe",
-                        newDestPath + "\\" + tb_ProjectName.Text + "\\Binaries\\Win64" + tb_ProjectName + "Server.exe", 
-                        true);
-
-                if (File.Exists("Bats\\" + tb_ProjectName.Text + ".bat"))
-                    File.Copy("Bats\\" + tb_ProjectName.Text + ".bat", newDestPath + "\\" + tb_ProjectName.Text + ".bat", true);
+                tempSource = "Bats\\" + tb_ProjectName.Text + ".bat";
+                tempDest = newDestPath + "\\" + tb_ProjectName.Text + ".bat";
+                if (File.Exists(tempSource))
+                    File.Copy(tempSource, tempDest, true);
                 else
                     System.Windows.Forms.MessageBox.Show("Couldn't find " + tb_ProjectName.Text + ".bat in Bats Folder. Did not Copy.");
             }
