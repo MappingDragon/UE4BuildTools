@@ -11,6 +11,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using System.IO;
 using System.Security.AccessControl;
+using System.Configuration;
 
 namespace UE4BuildTools
 {
@@ -19,6 +20,11 @@ namespace UE4BuildTools
         // Variables to Hold onto
         Projects LoadedProjects = new Projects();
         CustomFileCopier FileCopier = new CustomFileCopier("", "");
+        string BinaryDirectory = Properties.Settings.Default.BinaryDirectory;
+        string Server = Properties.Settings.Default.AppendServer;
+        string Shipping = Properties.Settings.Default.AppendShipping;
+        string CustomButtonEvents = Properties.Settings.Default.CustomButtonEvents;
+        string FolderToDelete = Properties.Settings.Default.BuildFolder;
 
         public BuildDistribution()
         {
@@ -42,7 +48,7 @@ namespace UE4BuildTools
         private void LoadXMLData()
         {
             XmlSerializer serializer = new XmlSerializer(typeof(Projects));
-            using (StreamReader reader = new StreamReader("Resources\\Config.xml"))
+            using (StreamReader reader = new StreamReader("Resources\\Projects.xml"))
             {
                 LoadedProjects = (Projects)serializer.Deserialize(reader);
             }
@@ -59,7 +65,7 @@ namespace UE4BuildTools
             LoadedProjects.Project = LoadedProjects.Project.OrderBy(x => x.Name).ToList();
 
             XmlSerializer serializer = new XmlSerializer(typeof(Projects));
-            Stream fs = new FileStream("Resources\\Config.xml", FileMode.Create);
+            Stream fs = new FileStream("Resources\\Projects.xml", FileMode.Create);
             using (XmlTextWriter writer = new XmlTextWriter(fs, Encoding.Unicode))
             {
                 writer.Formatting = Formatting.Indented;
@@ -147,8 +153,10 @@ namespace UE4BuildTools
             {
                 Project temp = new Project();
                 temp.Name = tb_ProjectName.Text;
+                temp.DifName = tb_DifferingName.Text;
                 temp.Version = tb_ProjectVersion_Release.Text + '.' + tb_ProjectVersion_Major.Text + '.' + tb_ProjectVersion_Minor.Text;
                 temp.Source = tb_SourcePath.Text;
+                temp.ProjectSource = tb_ProjectSource.Text;
                 temp.Destination = tb_DestinationPath.Text;
 
                 // Check to see if project already exists, if so, update
@@ -181,8 +189,10 @@ namespace UE4BuildTools
             {
                 Project temp = new Project();
                 temp.Name = tb_ProjectName.Text;
+                temp.DifName = tb_DifferingName.Text;
                 temp.Version = tb_ProjectVersion_Release.Text + '.' + tb_ProjectVersion_Major.Text + '.' + tb_ProjectVersion_Minor.Text;
                 temp.Source = tb_SourcePath.Text;
+                temp.ProjectSource = tb_ProjectSource.Text;
                 temp.Destination = tb_DestinationPath.Text;
 
                 LoadedProjects.Project.Add(temp);
@@ -265,10 +275,21 @@ namespace UE4BuildTools
             Control.CheckForIllegalCrossThreadCalls = false;
             BackgroundWorker worker = sender as BackgroundWorker;
             ToggleForm(false);
+
             if (File.Exists(tb_SourcePath.Text) && worker != null)
             {
-                string newDestPathx = System.IO.Path.Combine(tb_DestinationPath.Text,
-                    tb_ProjectName.Text + "_" + tb_ProjectVersion_Release.Text + '.' + tb_ProjectVersion_Major.Text + '.' + tb_ProjectVersion_Minor.Text);
+                string newDestPathx = "";
+                if (cb_ShippingBuild.Checked)
+                {
+                    newDestPathx = System.IO.Path.Combine(tb_DestinationPath.Text,
+                        tb_ProjectName.Text + "_" + tb_ProjectVersion_Release.Text + '.' + tb_ProjectVersion_Major.Text + '.' + tb_ProjectVersion_Minor.Text + "Shipping");
+                }
+                else
+                {
+                    newDestPathx = System.IO.Path.Combine(tb_DestinationPath.Text,
+                        tb_ProjectName.Text + "_" + tb_ProjectVersion_Release.Text + '.' + tb_ProjectVersion_Major.Text + '.' + tb_ProjectVersion_Minor.Text);
+                }
+                
                 string newSourcePath = Path.GetDirectoryName(tb_SourcePath.Text);
 
                 pb_Process.Minimum = 0;
@@ -278,12 +299,41 @@ namespace UE4BuildTools
             }
 
             // Copy over the server.exe at the end.
-            string newDestPath = System.IO.Path.Combine(tb_DestinationPath.Text,
-                tb_ProjectName.Text + "_" + tb_ProjectVersion_Release.Text + '.' + tb_ProjectVersion_Major.Text + '.' + tb_ProjectVersion_Minor.Text);
-            string tempSource = tb_ProjectSource.Text + "\\" + tb_ProjectName.Text + "\\Binaries\\Win64\\" + tb_ProjectName.Text + "Server.exe";
-            string tempDest = newDestPath + "\\" + tb_ProjectName.Text + "\\Binaries\\Win64\\" + tb_ProjectName.Text + "Server.exe";
+            ////////////////////////////////////////
+
+            // Set the proper name needed
+            string ProjectName = "";
+            if (cb_DifferingName.Checked)
+                ProjectName = tb_DifferingName.Text;
+            else
+                ProjectName = tb_ProjectName.Text;
+
+            // Check to see if this is a shipping build
+            string tempSource = "";
+            string tempDest = "";
+            string newDestPath = "";
+            if (cb_ShippingBuild.Checked)
+            {
+                newDestPath = System.IO.Path.Combine(tb_DestinationPath.Text,
+                    tb_ProjectName.Text + "_" + tb_ProjectVersion_Release.Text + '.' + tb_ProjectVersion_Major.Text + '.' + tb_ProjectVersion_Minor.Text + "Shipping");
+                tempSource = tb_ProjectSource.Text + "\\" + tb_ProjectName.Text + BinaryDirectory + ProjectName + Server + Shipping + ".exe";
+                tempDest = newDestPath + "\\" + ProjectName + BinaryDirectory + ProjectName + Server + Shipping + ".exe";
+            }
+            else
+            {
+                newDestPath = System.IO.Path.Combine(tb_DestinationPath.Text,
+                    tb_ProjectName.Text + "_" + tb_ProjectVersion_Release.Text + '.' + tb_ProjectVersion_Major.Text + '.' + tb_ProjectVersion_Minor.Text);
+                tempSource = tb_ProjectSource.Text + "\\" + tb_ProjectName.Text + BinaryDirectory + ProjectName + Server + ".exe";
+                tempDest = newDestPath + "\\" + ProjectName + BinaryDirectory + ProjectName + Server + ".exe";
+            }
+
+            // Copy over file
             if (File.Exists(tempSource))
                 File.Copy(tempSource, tempDest, true);
+
+            // Delete Temp Build Folder
+            if (Directory.Exists(FolderToDelete))
+                Directory.Delete(FolderToDelete, true);
         }
 
         void myBackgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -314,8 +364,18 @@ namespace UE4BuildTools
             SaveXMLData();
 
             // Make new folder with appropiate naming convention
-            string newDestPath = System.IO.Path.Combine(tb_DestinationPath.Text, 
-                tb_ProjectName.Text + "_" + tb_ProjectVersion_Release.Text + '.' + tb_ProjectVersion_Major.Text + '.' + tb_ProjectVersion_Minor.Text);
+            string newDestPath = "";
+            if (cb_ShippingBuild.Checked)
+            {
+                newDestPath = System.IO.Path.Combine(tb_DestinationPath.Text,
+                    tb_ProjectName.Text + "_" + tb_ProjectVersion_Release.Text + '.' + tb_ProjectVersion_Major.Text + '.' + tb_ProjectVersion_Minor.Text + "Shipping");
+            }
+            else
+            {
+                newDestPath = System.IO.Path.Combine(tb_DestinationPath.Text,
+                    tb_ProjectName.Text + "_" + tb_ProjectVersion_Release.Text + '.' + tb_ProjectVersion_Major.Text + '.' + tb_ProjectVersion_Minor.Text);
+            }
+
             string newSourcePath = Path.GetDirectoryName(tb_SourcePath.Text);
             if (!Directory.Exists(newDestPath))
             {
@@ -338,8 +398,8 @@ namespace UE4BuildTools
                 string tempDest;
 
                 // Move the other dependent files
-                tempSource = "Resources\\CustomButtonEvents.json";
-                tempDest = newDestPath + "\\CustomButtonEvents.json";
+                tempSource = "Resources\\" + CustomButtonEvents;
+                tempDest = newDestPath + "\\" + CustomButtonEvents;
                 if (File.Exists(tempSource))
                     File.Copy(tempSource, tempDest, true);
                 else
@@ -453,8 +513,11 @@ namespace UE4BuildTools
             if(cb_ProjectList.Items != null)
             {
                 if (cb_ProjectList.Items != null)
+                {
                     if (cb_ProjectList.SelectedIndex >= 0)
+                    {
                         foreach (Project project in LoadedProjects.Project)
+                        {
                             if (String.Compare(cb_ProjectList.SelectedItem.ToString(), project.Name) == 0)
                             {
                                 string[] versions = project.Version.Split('.');
@@ -485,15 +548,25 @@ namespace UE4BuildTools
                                     }
                                 }
                                 tb_ProjectName.Text = project.Name;
-                                tb_ProjectName.Text = project.Name;
+                                tb_DifferingName.Text = project.DifName;
                                 tb_ProjectSource.Text = project.ProjectSource;
                                 tb_SourcePath.Text = project.Source;
                                 tb_DestinationPath.Text = project.Destination;
                                 return;
                             }
+                        }
+                    }
+                }
             }
         }
-#endregion
 
+        private void cb_DifferingName_CheckedChanged(object sender, EventArgs e)
+        {
+            if (cb_DifferingName.Checked)
+                tb_DifferingName.Enabled = true;
+            else
+                tb_DifferingName.Enabled = false;
+        }
+        #endregion
     }
 }

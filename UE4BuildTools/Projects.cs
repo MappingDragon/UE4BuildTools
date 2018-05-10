@@ -9,6 +9,8 @@ namespace UE4BuildTools
     {
         [XmlElement(ElementName = "name")]
         public string Name { get; set; }
+        [XmlElement(ElementName = "difname")]
+        public string DifName { get; set; }
         [XmlElement(ElementName = "version")]
         public string Version { get; set; }
         [XmlElement(ElementName = "projectsource")]

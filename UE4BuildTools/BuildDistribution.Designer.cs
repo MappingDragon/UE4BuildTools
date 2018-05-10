@@ -53,12 +53,15 @@
             this.btn_SaveCurrentProject = new System.Windows.Forms.Button();
             this.tb_ProjectSource = new System.Windows.Forms.TextBox();
             this.btn_Project = new System.Windows.Forms.Button();
+            this.cb_ShippingBuild = new System.Windows.Forms.CheckBox();
+            this.cb_DifferingName = new System.Windows.Forms.CheckBox();
+            this.tb_DifferingName = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // btn_Process
             // 
             this.btn_Process.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.btn_Process.Location = new System.Drawing.Point(497, 170);
+            this.btn_Process.Location = new System.Drawing.Point(497, 191);
             this.btn_Process.Name = "btn_Process";
             this.btn_Process.Size = new System.Drawing.Size(90, 39);
             this.btn_Process.TabIndex = 0;
@@ -69,7 +72,7 @@
             // btn_Exit
             // 
             this.btn_Exit.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.btn_Exit.Location = new System.Drawing.Point(20, 170);
+            this.btn_Exit.Location = new System.Drawing.Point(20, 191);
             this.btn_Exit.Name = "btn_Exit";
             this.btn_Exit.Size = new System.Drawing.Size(90, 39);
             this.btn_Exit.TabIndex = 1;
@@ -89,7 +92,7 @@
             // 
             // btn_Source
             // 
-            this.btn_Source.Location = new System.Drawing.Point(512, 116);
+            this.btn_Source.Location = new System.Drawing.Point(512, 137);
             this.btn_Source.Name = "btn_Source";
             this.btn_Source.Size = new System.Drawing.Size(75, 23);
             this.btn_Source.TabIndex = 3;
@@ -99,7 +102,7 @@
             // 
             // btn_Destination
             // 
-            this.btn_Destination.Location = new System.Drawing.Point(512, 142);
+            this.btn_Destination.Location = new System.Drawing.Point(512, 163);
             this.btn_Destination.Name = "btn_Destination";
             this.btn_Destination.Size = new System.Drawing.Size(75, 23);
             this.btn_Destination.TabIndex = 4;
@@ -109,20 +112,21 @@
             // 
             // tb_SourcePath
             // 
-            this.tb_SourcePath.Location = new System.Drawing.Point(20, 118);
+            this.tb_SourcePath.Location = new System.Drawing.Point(20, 139);
             this.tb_SourcePath.Name = "tb_SourcePath";
             this.tb_SourcePath.Size = new System.Drawing.Size(486, 20);
             this.tb_SourcePath.TabIndex = 5;
             // 
             // tb_DestinationPath
             // 
-            this.tb_DestinationPath.Location = new System.Drawing.Point(20, 144);
+            this.tb_DestinationPath.Location = new System.Drawing.Point(20, 165);
             this.tb_DestinationPath.Name = "tb_DestinationPath";
             this.tb_DestinationPath.Size = new System.Drawing.Size(486, 20);
             this.tb_DestinationPath.TabIndex = 6;
             // 
             // cb_ProjectList
             // 
+            this.cb_ProjectList.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cb_ProjectList.FormattingEnabled = true;
             this.cb_ProjectList.Location = new System.Drawing.Point(23, 10);
             this.cb_ProjectList.Name = "cb_ProjectList";
@@ -132,7 +136,7 @@
             // 
             // tb_ProjectVersion_Release
             // 
-            this.tb_ProjectVersion_Release.Location = new System.Drawing.Point(104, 37);
+            this.tb_ProjectVersion_Release.Location = new System.Drawing.Point(108, 37);
             this.tb_ProjectVersion_Release.Name = "tb_ProjectVersion_Release";
             this.tb_ProjectVersion_Release.Size = new System.Drawing.Size(28, 20);
             this.tb_ProjectVersion_Release.TabIndex = 8;
@@ -142,7 +146,7 @@
             // lbl_ProjectVersion
             // 
             this.lbl_ProjectVersion.AutoSize = true;
-            this.lbl_ProjectVersion.Location = new System.Drawing.Point(20, 40);
+            this.lbl_ProjectVersion.Location = new System.Drawing.Point(24, 40);
             this.lbl_ProjectVersion.Name = "lbl_ProjectVersion";
             this.lbl_ProjectVersion.Size = new System.Drawing.Size(78, 13);
             this.lbl_ProjectVersion.TabIndex = 9;
@@ -151,7 +155,7 @@
             // lbl_ProjectName
             // 
             this.lbl_ProjectName.AutoSize = true;
-            this.lbl_ProjectName.Location = new System.Drawing.Point(20, 66);
+            this.lbl_ProjectName.Location = new System.Drawing.Point(24, 66);
             this.lbl_ProjectName.Name = "lbl_ProjectName";
             this.lbl_ProjectName.Size = new System.Drawing.Size(71, 13);
             this.lbl_ProjectName.TabIndex = 10;
@@ -159,7 +163,7 @@
             // 
             // tb_ProjectName
             // 
-            this.tb_ProjectName.Location = new System.Drawing.Point(104, 62);
+            this.tb_ProjectName.Location = new System.Drawing.Point(108, 62);
             this.tb_ProjectName.Name = "tb_ProjectName";
             this.tb_ProjectName.Size = new System.Drawing.Size(149, 20);
             this.tb_ProjectName.TabIndex = 11;
@@ -167,7 +171,7 @@
             // cb_IncrementVersion
             // 
             this.cb_IncrementVersion.AutoSize = true;
-            this.cb_IncrementVersion.Location = new System.Drawing.Point(259, 40);
+            this.cb_IncrementVersion.Location = new System.Drawing.Point(261, 40);
             this.cb_IncrementVersion.Name = "cb_IncrementVersion";
             this.cb_IncrementVersion.Size = new System.Drawing.Size(111, 17);
             this.cb_IncrementVersion.TabIndex = 12;
@@ -193,13 +197,10 @@
             // 
             this.myBackgroundWorker.WorkerReportsProgress = true;
             this.myBackgroundWorker.WorkerSupportsCancellation = true;
-            this.myBackgroundWorker.DoWork += myBackgroundWorker_DoWork;
-            this.myBackgroundWorker.ProgressChanged += myBackgroundWorker_ProgressChanged;
-            this.myBackgroundWorker.RunWorkerCompleted += myBackgroundWorker_RunWorkerCompleted;
             // 
             // pb_Process
             // 
-            this.pb_Process.Location = new System.Drawing.Point(116, 170);
+            this.pb_Process.Location = new System.Drawing.Point(116, 191);
             this.pb_Process.Name = "pb_Process";
             this.pb_Process.Size = new System.Drawing.Size(375, 23);
             this.pb_Process.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
@@ -208,7 +209,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(136, 44);
+            this.label1.Location = new System.Drawing.Point(140, 44);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(10, 13);
             this.label1.TabIndex = 15;
@@ -216,7 +217,7 @@
             // 
             // tb_ProjectVersion_Major
             // 
-            this.tb_ProjectVersion_Major.Location = new System.Drawing.Point(150, 37);
+            this.tb_ProjectVersion_Major.Location = new System.Drawing.Point(154, 37);
             this.tb_ProjectVersion_Major.Name = "tb_ProjectVersion_Major";
             this.tb_ProjectVersion_Major.Size = new System.Drawing.Size(28, 20);
             this.tb_ProjectVersion_Major.TabIndex = 16;
@@ -225,7 +226,7 @@
             // 
             // tb_ProjectVersion_Minor
             // 
-            this.tb_ProjectVersion_Minor.Location = new System.Drawing.Point(196, 37);
+            this.tb_ProjectVersion_Minor.Location = new System.Drawing.Point(200, 37);
             this.tb_ProjectVersion_Minor.Name = "tb_ProjectVersion_Minor";
             this.tb_ProjectVersion_Minor.Size = new System.Drawing.Size(28, 20);
             this.tb_ProjectVersion_Minor.TabIndex = 18;
@@ -235,7 +236,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(182, 44);
+            this.label2.Location = new System.Drawing.Point(186, 44);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(10, 13);
             this.label2.TabIndex = 17;
@@ -253,7 +254,7 @@
             // 
             // tb_ProjectSource
             // 
-            this.tb_ProjectSource.Location = new System.Drawing.Point(20, 92);
+            this.tb_ProjectSource.Location = new System.Drawing.Point(20, 113);
             this.tb_ProjectSource.Name = "tb_ProjectSource";
             this.tb_ProjectSource.Size = new System.Drawing.Size(486, 20);
             this.tb_ProjectSource.TabIndex = 21;
@@ -261,7 +262,7 @@
             // 
             // btn_Project
             // 
-            this.btn_Project.Location = new System.Drawing.Point(512, 90);
+            this.btn_Project.Location = new System.Drawing.Point(512, 111);
             this.btn_Project.Name = "btn_Project";
             this.btn_Project.Size = new System.Drawing.Size(75, 23);
             this.btn_Project.TabIndex = 20;
@@ -269,11 +270,43 @@
             this.btn_Project.UseVisualStyleBackColor = true;
             this.btn_Project.Click += new System.EventHandler(this.btn_Project_Click);
             // 
+            // cb_ShippingBuild
+            // 
+            this.cb_ShippingBuild.AutoSize = true;
+            this.cb_ShippingBuild.Location = new System.Drawing.Point(261, 12);
+            this.cb_ShippingBuild.Name = "cb_ShippingBuild";
+            this.cb_ShippingBuild.Size = new System.Drawing.Size(93, 17);
+            this.cb_ShippingBuild.TabIndex = 22;
+            this.cb_ShippingBuild.Text = "Shipping Build";
+            this.cb_ShippingBuild.UseVisualStyleBackColor = true;
+            // 
+            // cb_DifferingName
+            // 
+            this.cb_DifferingName.AutoSize = true;
+            this.cb_DifferingName.Location = new System.Drawing.Point(6, 90);
+            this.cb_DifferingName.Name = "cb_DifferingName";
+            this.cb_DifferingName.Size = new System.Drawing.Size(96, 17);
+            this.cb_DifferingName.TabIndex = 23;
+            this.cb_DifferingName.Text = "Differing Name";
+            this.cb_DifferingName.UseVisualStyleBackColor = true;
+            this.cb_DifferingName.CheckedChanged += new System.EventHandler(this.cb_DifferingName_CheckedChanged);
+            // 
+            // tb_DifferingName
+            // 
+            this.tb_DifferingName.Enabled = false;
+            this.tb_DifferingName.Location = new System.Drawing.Point(108, 88);
+            this.tb_DifferingName.Name = "tb_DifferingName";
+            this.tb_DifferingName.Size = new System.Drawing.Size(149, 20);
+            this.tb_DifferingName.TabIndex = 24;
+            // 
             // BuildDistribution
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(611, 223);
+            this.ClientSize = new System.Drawing.Size(611, 235);
+            this.Controls.Add(this.tb_DifferingName);
+            this.Controls.Add(this.cb_DifferingName);
+            this.Controls.Add(this.cb_ShippingBuild);
             this.Controls.Add(this.tb_ProjectSource);
             this.Controls.Add(this.btn_Project);
             this.Controls.Add(this.btn_SaveCurrentProject);
@@ -330,6 +363,9 @@
         private System.Windows.Forms.Button btn_SaveCurrentProject;
         private System.Windows.Forms.TextBox tb_ProjectSource;
         private System.Windows.Forms.Button btn_Project;
+        private System.Windows.Forms.CheckBox cb_ShippingBuild;
+        private System.Windows.Forms.CheckBox cb_DifferingName;
+        private System.Windows.Forms.TextBox tb_DifferingName;
     }
 }
 
