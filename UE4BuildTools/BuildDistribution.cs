@@ -93,6 +93,16 @@ namespace UE4BuildTools
         // Toggles the form to prevent editing of fields
         private void ToggleForm(bool bln_Enable)
         {
+            if (cb_DifferingName.Checked)
+            {
+                cb_DifferingName.Enabled = bln_Enable;
+                tb_DifferingName.Enabled = bln_Enable;
+            }
+            else
+            {
+                cb_DifferingName.Enabled = bln_Enable;
+            }
+
             btn_Exit.Enabled = bln_Enable;
             btn_Process.Enabled = bln_Enable;
             btn_AddProject.Enabled = bln_Enable;
@@ -111,7 +121,9 @@ namespace UE4BuildTools
             tb_SourcePath.Enabled = bln_Enable;
             tb_DestinationPath.Enabled = bln_Enable;
             cb_IncrementVersion.Enabled = bln_Enable;
+            cb_ShippingBuild.Enabled = bln_Enable;
             pb_Process.Visible = !bln_Enable;
+            //lc_WorkingCircle.Visible = !bln_Enable;
         }
 
         // Recursive function to copy entire directories
@@ -346,6 +358,7 @@ namespace UE4BuildTools
             ToggleForm(true);
             IncrementVersion();
             SaveXMLData();
+            lc_WorkingCircle.Visible = false;
             MessageBox.Show("Done");
         }
 #endregion
@@ -362,6 +375,7 @@ namespace UE4BuildTools
             }
 
             SaveXMLData();
+            lc_WorkingCircle.Visible = true;
 
             // Make new folder with appropiate naming convention
             string newDestPath = "";

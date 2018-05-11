@@ -56,6 +56,7 @@
             this.cb_ShippingBuild = new System.Windows.Forms.CheckBox();
             this.cb_DifferingName = new System.Windows.Forms.CheckBox();
             this.tb_DifferingName = new System.Windows.Forms.TextBox();
+            this.lc_WorkingCircle = new MRG.Controls.UI.LoadingCircle();
             this.SuspendLayout();
             // 
             // btn_Process
@@ -197,6 +198,9 @@
             // 
             this.myBackgroundWorker.WorkerReportsProgress = true;
             this.myBackgroundWorker.WorkerSupportsCancellation = true;
+            this.myBackgroundWorker.DoWork += myBackgroundWorker_DoWork;
+            this.myBackgroundWorker.ProgressChanged += myBackgroundWorker_ProgressChanged;
+            this.myBackgroundWorker.RunWorkerCompleted += myBackgroundWorker_RunWorkerCompleted;
             // 
             // pb_Process
             // 
@@ -299,11 +303,29 @@
             this.tb_DifferingName.Size = new System.Drawing.Size(149, 20);
             this.tb_DifferingName.TabIndex = 24;
             // 
+            // lc_WorkingCircle
+            // 
+            this.lc_WorkingCircle.Active = true;
+            this.lc_WorkingCircle.Color = System.Drawing.Color.RoyalBlue;
+            this.lc_WorkingCircle.InnerCircleRadius = 5;
+            this.lc_WorkingCircle.Location = new System.Drawing.Point(263, 60);
+            this.lc_WorkingCircle.Name = "lc_WorkingCircle";
+            this.lc_WorkingCircle.NumberSpoke = 12;
+            this.lc_WorkingCircle.OuterCircleRadius = 11;
+            this.lc_WorkingCircle.RotationSpeed = 100;
+            this.lc_WorkingCircle.Size = new System.Drawing.Size(75, 52);
+            this.lc_WorkingCircle.SpokeThickness = 2;
+            this.lc_WorkingCircle.StylePreset = MRG.Controls.UI.LoadingCircle.StylePresets.MacOSX;
+            this.lc_WorkingCircle.TabIndex = 25;
+            this.lc_WorkingCircle.Text = "WorkingCircle";
+            this.lc_WorkingCircle.Visible = false;
+            // 
             // BuildDistribution
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(611, 235);
+            this.Controls.Add(this.lc_WorkingCircle);
             this.Controls.Add(this.tb_DifferingName);
             this.Controls.Add(this.cb_DifferingName);
             this.Controls.Add(this.cb_ShippingBuild);
@@ -366,6 +388,7 @@
         private System.Windows.Forms.CheckBox cb_ShippingBuild;
         private System.Windows.Forms.CheckBox cb_DifferingName;
         private System.Windows.Forms.TextBox tb_DifferingName;
+        private MRG.Controls.UI.LoadingCircle lc_WorkingCircle;
     }
 }
 
